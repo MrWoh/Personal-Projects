@@ -1,6 +1,4 @@
-
 from random import randrange
-from sre_parse import State
 import tkinter as tk
 import tkinter.ttk as ttk
 import os
@@ -13,6 +11,7 @@ tank_enemy_y = (randrange(0, 5))
 tank_player_x = (randrange(0, 5))
 tank_player_y = (randrange(0, 5))
 grid_buttons = []
+
 
 class TankTkinterApp:
     def __init__(self, master=None):
@@ -60,7 +59,6 @@ class TankTkinterApp:
         self.button_enemy = ttk.Button(self.shmup_frame, image=self.img_enemy)
         self.button_enemy.grid(column=tank_enemy_x, row=tank_enemy_y)
 
-
         self.shmup_frame.configure(height="200", width="200")
         self.shmup_frame.grid(column=0, row=0)
         self.label_frame.configure(height="200", text="Tank Shmup", width="200")
@@ -74,6 +72,7 @@ class TankTkinterApp:
 
     def run(self):
         self.main_window.mainloop()
+
 
 if __name__ == "__main__":
     root = tk.Tk()
