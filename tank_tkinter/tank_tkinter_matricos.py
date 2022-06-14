@@ -6,15 +6,22 @@ from PIL import ImageTk, Image
 import os
 
 # Variables
-game_folder = os.path.dirname(__file__)
-img_folder = os.path.join(game_folder, 'resources')
 tank_enemy_x, tank_enemy_y = 0, 0
 tank_player_x, tank_player_y = 0, 0
 player_axis = 360
 enemy_axis = 0
-running = False
-
 grid_buttons = []
+
+# Sprites
+game_folder = os.path.dirname(__file__)
+img_folder = os.path.join(game_folder, 'resources')
+img_path_original= (os.path.join(img_folder, 'tank_main_t.png'))
+img_player_original = Image.open(os.path.join(img_folder, 'tank_main.png'))
+img_enemy_original = Image.open(os.path.join(img_folder, 'tank_enemy.png'))
+img_player_copy = img_player_original.rotate(player_axis)
+img_enemy_copy = img_enemy_original.rotate(player_axis)
+img_player_copy.save(os.path.join(img_folder, 'tank_main_t.png'))
+img_enemy_copy.save(os.path.join(img_folder, 'tank_enemy_t.png'))
 
 
 def exit_game():
@@ -22,10 +29,10 @@ def exit_game():
     if confirm_exit:
         root.quit()
 
-
-def draw():
-    print('draw')
-
+# Image rotate function
+def rotate_img(img_path, rt_degr):
+    img = Image.open(img_path)
+    return img.rotate(rt_degr, expand=1)
 
 class TankTkinterApp:
     def __init__(self, master=None):
@@ -59,16 +66,12 @@ class TankTkinterApp:
         self.shmup_frame = ttk.Frame(self.label_frame)
 
         # Grid buttons
-        self.img_player_original = Image.open(os.path.join(img_folder, 'tank_main.png'))
-        self.img_enemy_original = Image.open(os.path.join(img_folder, 'tank_enemy.png'))
-        self.img_player_copy = self.img_player_original.rotate(player_axis)
-        self.img_enemy_copy = self.img_enemy_original.rotate(player_axis)
-        self.img_player_copy.save(os.path.join(img_folder, 'tank_main_t.png'))
-        self.img_enemy_copy.save(os.path.join(img_folder, 'tank_enemy_t.png'))
+        # Units
         self.img_bg = ImageTk.PhotoImage(Image.open(os.path.join(img_folder, 'dirt.png')))
         self.img_player_copy = ImageTk.PhotoImage(Image.open(os.path.join(img_folder, 'tank_main_t.png')))
-        self.img_enemy_copy = ImageTk.PhotoImage(Image.open(os.path.join(img_folder, 'tank_enemy_t.png')))
+        # self.img_enemy_copy = ImageTk.PhotoImage(Image.open(os.path.join(img_folder, 'tank_enemy_t.png')))
 
+        # Grid tiles
         for index in range(0, 25):
             self.button = ttk.Button(self.shmup_frame, image=self.img_bg)
             grid_buttons.append(self.button)
@@ -81,7 +84,7 @@ class TankTkinterApp:
 
         # Units
         self.button_player = ttk.Button(self.shmup_frame, image=self.img_player_copy)
-        self.button_enemy = ttk.Button(self.shmup_frame, image=self.img_enemy_copy)
+        # self.button_enemy = ttk.Button(self.shmup_frame, image=self.img_enemy_copy)
 
         # Frame
         self.shmup_frame.configure(height="200", width="200")
@@ -99,18 +102,17 @@ class TankTkinterApp:
         self.main_window.mainloop()
         app.game_running()
 
+# Reset game
     def reset_game(self):
-        global running
-
-        running = False
         confirm_reset = tkinter.messagebox.askyesno("Reset!", "Are You sure want to Reset?")
         if confirm_reset:
             self.button_player.destroy()
-            self.button_enemy.destroy()
+            # self.button_enemy.destroy()
 
+# Movement player unit
     def move_up(self):
         global tank_player_y, tank_player_x
-        if tank_player_y in range(0, 4):
+        if tank_player_y in range(1, 4):
             tank_player_y -= 1
         self.button_player.grid(column=tank_player_x, row=tank_player_y)
 
@@ -132,49 +134,44 @@ class TankTkinterApp:
             tank_player_x += 1
         self.button_player.grid(column=tank_player_x, row=tank_player_y)
 
+# Rotate player unit
     def turn_left(self):
-        global player_axis
-        player_axis = player_axis - 90
-        self.img_player_copy = self.img_player_original.rotate(30)
-        self.img_player_copy.save(os.path.join(img_folder, 'tank_main_t.png'))
-        self.img_player_copy = Image.open(os.path.join(img_folder, 'tank_main_t.png'))
-        self.button_player = ttk.Button(image=self.img_player_copy)
+        global img_player_copy
+        img_rt_90 = rotate_img(img_path_original, 90)
+        img_rt_90.save((os.path.join(img_folder, 'tank_main_t.png')))
+        img_player_copy = ImageTk.PhotoImage(img_rt_90) # update image with rotated one
+        self.button_player.config(image=img_player_copy)
 
+# Rotate player unit
     def turn_right(self):
-        global player_axis, tank_player_x, tank_player_y
-        player_axis = player_axis + 90
-        self.img_player_copy = self.img_player_original.rotate(30)
-        self.img_player_copy.save(os.path.join(img_folder, 'tank_main_t.png'))
-        self.img_player_copy = Image.open(os.path.join(img_folder, 'tank_main_t.png'))
-        self.button_player = ttk.Button(image=self.img_player_copy)
-        self.button_player.grid(column=tank_player_x, row=tank_player_y)
+        global img_player_copy
+        img_rt_90 = rotate_img(img_path_original, -90)
+        img_rt_90.save((os.path.join(img_folder, 'tank_main_t.png')))
+        img_player_copy = ImageTk.PhotoImage(img_rt_90) # update image with rotated one
+        self.button_player.config(image=img_player_copy)
 
     def player_shoot(self):
         print('Fire')
 
-    def win(self):
+    def win_game(self):
         print('win')
 
-    def lose(self):
+    def lose_game(self):
         print('Lose')
 
-    def start_game(self):
-        global tank_player_x, tank_player_y, tank_enemy_x, tank_enemy_y, running
-        running = True
+    def draw_game(self):
+        print('draw')
 
+# Game start/unit creation
+    def start_game(self):
+        global tank_player_x, tank_player_y, tank_enemy_x, tank_enemy_y
         tank_player_x, tank_player_y = (randrange(0, 4)), (randrange(3, 4))
-        tank_enemy_x, tank_enemy_y = (randrange(0, 4)), (randrange(0, 2))
+        # tank_enemy_x, tank_enemy_y = (randrange(0, 4)), (randrange(0, 2))
         self.button_player.grid(column=tank_player_x, row=tank_player_y)
-        self.button_enemy.grid(column=tank_enemy_x, row=tank_enemy_y)
+        # self.button_enemy.grid(column=tank_enemy_x, row=tank_enemy_y)
 
     def game_running(self):
-        running = True
-
-        while running:
-            if (tank_player_x, tank_player_y) == (tank_enemy_x, tank_enemy_y):
-                draw()
-                break
-        running = False
+        pass
 
 
 # Class init/app run
