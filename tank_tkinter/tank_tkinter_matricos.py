@@ -24,20 +24,21 @@ def exit_game():
 
 class TankTkinterApp:
     def __init__(self, master=None):
-        # User controls
+        # # User controls
         self.main = ttk.Frame(master)
-        self.up = ttk.Button(self.main, text="Up")
-        self.up.bind('<ButtonRelease-1>', lambda event: self.move_up())
+        self.up = ttk.Button(self.main, text="Up", command=lambda: self.move_up())
+        # self.up.bind('<ButtonRelease-2>', lambda event: self.move_up())
         self.up.grid(column=1, pady=3, row=1)
-        self.left = ttk.Button(self.main, text="Left")
-        self.up.bind('<ButtonRelease-2>', lambda event: self.move_left())
+        self.left = ttk.Button(self.main, text="Left", command=lambda: self.move_left())
+        # self.up.bind('<ButtonRelease-3>', lambda event: self.move_left())
         self.left.grid(column=0, row=2, sticky='e')
-        self.fire = ttk.Button(self.main, text="Fire")
-        self.fire.bind('<ButtonRelease-3>', lambda event: self.player_shoot())
+        self.fire = ttk.Button(self.main, text="Fire", command=lambda: self.player_shoot())
         self.fire.grid(column=1, pady=3, row=2)
         self.right = ttk.Button(self.main, text="Right", command=lambda: self.move_right())
+        # self.up.bind('<ButtonRelease-4>', lambda event: self.move_right())
         self.right.grid(column=2, row=2, sticky='w')
         self.down = ttk.Button(self.main, text="Down", command=lambda: self.move_down())
+        # self.up.bind('<ButtonRelease-5>', lambda event: self.move_down())
         self.down.grid(column=1, pady="3", row=3)
         self.turn_l = ttk.Button(self.main, text="Turn L", command=lambda: self.turn_left())
         self.turn_l.grid(column=0, row=1, sticky="e")
@@ -80,7 +81,7 @@ class TankTkinterApp:
         # Frame
         self.shmup_frame.configure(height="200", width="200")
         self.shmup_frame.grid(column=0, row=0)
-        self.label_frame.configure(height="200", text="Tank Shmup", width="200")
+        self.label_frame.configure(height="200", text="Tank Shmup", width="200")  # , font='Arial 16 bold'
         self.label_frame.grid(column=0, columnspan=3, row=0)
         self.main.configure(height="200", width="200")
         self.main.pack(side="top")
@@ -100,11 +101,8 @@ class TankTkinterApp:
     def reset_game(self):
         confirm_reset = tkinter.messagebox.askyesno("Reset!", "Are You sure want to Reset?")
         if confirm_reset:
-            global tank_player_x, tank_player_y
-            tank_player_x, tank_player_y = (randrange(0, 4)), (randrange(3, 4))
             self.button_player.destroy()
-            self.button_player = ttk.Button(self.shmup_frame, image=self.img_player_copy)
-            self.button_player.grid(column=tank_player_x, row=tank_player_y)
+            self.button_enemy.destroy()
 
     def move_up(self):
         global tank_player_y, tank_player_x
@@ -165,6 +163,14 @@ class TankTkinterApp:
         self.button_player.grid(column=tank_player_x, row=tank_player_y)
         self.button_enemy.grid(column=tank_enemy_x, row=tank_enemy_y)
 
+    def game_running(self):
+        running = True
+        while running:
+            if (tank_player_x, tank_player_y) == (0, 4):
+                print('end')
+                break
+        running = False
+
 
 # Class init/app run
 if __name__ == "__main__":
@@ -172,3 +178,4 @@ if __name__ == "__main__":
     root.resizable(False, False)
     app = TankTkinterApp(root)
     app.run()
+    app.game_running()
