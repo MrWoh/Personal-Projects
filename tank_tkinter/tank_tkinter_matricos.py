@@ -12,6 +12,7 @@ tank_enemy_x, tank_enemy_y = 0, 0
 tank_player_x, tank_player_y = 0, 0
 player_axis = 360
 enemy_axis = 0
+running = False
 
 grid_buttons = []
 
@@ -20,6 +21,10 @@ def exit_game():
     confirm_exit = tkinter.messagebox.askyesno("Quit!", "Are You sure want to Quit?")
     if confirm_exit:
         root.quit()
+
+
+def draw():
+    print('draw')
 
 
 class TankTkinterApp:
@@ -54,15 +59,15 @@ class TankTkinterApp:
         self.shmup_frame = ttk.Frame(self.label_frame)
 
         # Grid buttons
-        self.img_player_original = Image.open(os.path.join(img_folder, 'tankBase.png'))
-        self.img_enemy_original = Image.open(os.path.join(img_folder, 'tankEnemy.png'))
+        self.img_player_original = Image.open(os.path.join(img_folder, 'tank_main.png'))
+        self.img_enemy_original = Image.open(os.path.join(img_folder, 'tank_enemy.png'))
         self.img_player_copy = self.img_player_original.rotate(player_axis)
         self.img_enemy_copy = self.img_enemy_original.rotate(player_axis)
-        self.img_player_copy.save(os.path.join(img_folder, 'tankBaseT.png'))
-        self.img_enemy_copy.save(os.path.join(img_folder, 'tankEnemyT.png'))
+        self.img_player_copy.save(os.path.join(img_folder, 'tank_main_t.png'))
+        self.img_enemy_copy.save(os.path.join(img_folder, 'tank_enemy_t.png'))
         self.img_bg = ImageTk.PhotoImage(Image.open(os.path.join(img_folder, 'dirt.png')))
-        self.img_player_copy = ImageTk.PhotoImage(Image.open(os.path.join(img_folder, 'tankBaseT.png')))
-        self.img_enemy_copy = ImageTk.PhotoImage(Image.open(os.path.join(img_folder, 'tankEnemyT.png')))
+        self.img_player_copy = ImageTk.PhotoImage(Image.open(os.path.join(img_folder, 'tank_main_t.png')))
+        self.img_enemy_copy = ImageTk.PhotoImage(Image.open(os.path.join(img_folder, 'tank_enemy_t.png')))
 
         for index in range(0, 25):
             self.button = ttk.Button(self.shmup_frame, image=self.img_bg)
@@ -92,13 +97,12 @@ class TankTkinterApp:
 
     def run(self):
         self.main_window.mainloop()
-        game_running = True
-
-        while game_running:
-            print('Running')
-            break
+        app.game_running()
 
     def reset_game(self):
+        global running
+
+        running = False
         confirm_reset = tkinter.messagebox.askyesno("Reset!", "Are You sure want to Reset?")
         if confirm_reset:
             self.button_player.destroy()
@@ -132,17 +136,18 @@ class TankTkinterApp:
         global player_axis
         player_axis = player_axis - 90
         self.img_player_copy = self.img_player_original.rotate(30)
-        self.img_player_copy.save(os.path.join(img_folder, 'tankBaseT.png'))
-        self.img_player_copy = Image.open(os.path.join(img_folder, 'tankBaseT.png'))
+        self.img_player_copy.save(os.path.join(img_folder, 'tank_main_t.png'))
+        self.img_player_copy = Image.open(os.path.join(img_folder, 'tank_main_t.png'))
         self.button_player = ttk.Button(image=self.img_player_copy)
 
     def turn_right(self):
-        global player_axis
+        global player_axis, tank_player_x, tank_player_y
         player_axis = player_axis + 90
         self.img_player_copy = self.img_player_original.rotate(30)
-        self.img_player_copy.save(os.path.join(img_folder, 'tankBaseT.png'))
-        self.img_player_copy = Image.open(os.path.join(img_folder, 'tankBaseT.png'))
+        self.img_player_copy.save(os.path.join(img_folder, 'tank_main_t.png'))
+        self.img_player_copy = Image.open(os.path.join(img_folder, 'tank_main_t.png'))
         self.button_player = ttk.Button(image=self.img_player_copy)
+        self.button_player.grid(column=tank_player_x, row=tank_player_y)
 
     def player_shoot(self):
         print('Fire')
@@ -153,11 +158,10 @@ class TankTkinterApp:
     def lose(self):
         print('Lose')
 
-    def draw(self):
-        print('draw')
-
     def start_game(self):
-        global tank_player_x, tank_player_y, tank_enemy_x, tank_enemy_y
+        global tank_player_x, tank_player_y, tank_enemy_x, tank_enemy_y, running
+        running = True
+
         tank_player_x, tank_player_y = (randrange(0, 4)), (randrange(3, 4))
         tank_enemy_x, tank_enemy_y = (randrange(0, 4)), (randrange(0, 2))
         self.button_player.grid(column=tank_player_x, row=tank_player_y)
@@ -165,9 +169,10 @@ class TankTkinterApp:
 
     def game_running(self):
         running = True
+
         while running:
-            if (tank_player_x, tank_player_y) == (0, 4):
-                print('end')
+            if (tank_player_x, tank_player_y) == (tank_enemy_x, tank_enemy_y):
+                draw()
                 break
         running = False
 
@@ -178,4 +183,3 @@ if __name__ == "__main__":
     root.resizable(False, False)
     app = TankTkinterApp(root)
     app.run()
-    app.game_running()
