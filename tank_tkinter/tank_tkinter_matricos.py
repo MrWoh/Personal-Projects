@@ -15,7 +15,7 @@ grid_buttons = []
 # Sprites
 game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder, 'resources')
-img_path_original= (os.path.join(img_folder, 'tank_main_t.png'))
+img_path_original = (os.path.join(img_folder, 'tank_main_t.png'))
 img_player_original = Image.open(os.path.join(img_folder, 'tank_main.png'))
 img_enemy_original = Image.open(os.path.join(img_folder, 'tank_enemy.png'))
 img_player_copy = img_player_original.rotate(player_axis)
@@ -29,32 +29,44 @@ def exit_game():
     if confirm_exit:
         root.quit()
 
+
 # Image rotate function
-def rotate_img(img_path, rt_degr):
+def rotate_img(img_path, rt_degrees):
     img = Image.open(img_path)
-    return img.rotate(rt_degr, expand=1)
+    return img.rotate(rt_degrees, expand=True)
+
 
 class TankTkinterApp:
     def __init__(self, master=None):
-        # # User controls
+
+        # Sprites
+        self.img_key_w = ImageTk.PhotoImage(Image.open(os.path.join(img_folder, 'w-Key.png')))
+        self.img_key_s = ImageTk.PhotoImage(Image.open(os.path.join(img_folder, 's-Key.png')))
+        self.img_key_a = ImageTk.PhotoImage(Image.open(os.path.join(img_folder, 'a-Key.png')))
+        self.img_key_d = ImageTk.PhotoImage(Image.open(os.path.join(img_folder, 'd-Key.png')))
+        self.img_key_q = ImageTk.PhotoImage(Image.open(os.path.join(img_folder, 'q-Key.png')))
+        self.img_key_e = ImageTk.PhotoImage(Image.open(os.path.join(img_folder, 'e-Key.png')))
+        self.img_key_x = ImageTk.PhotoImage(Image.open(os.path.join(img_folder, 'X-Key.png')))
+
+        # User controls
         self.main = ttk.Frame(master)
-        self.up = ttk.Button(self.main, text="Up", command=lambda: self.move_up())
-        # self.up.bind('<ButtonRelease-2>', lambda event: self.move_up())
+        self.up = ttk.Button(self.main, text="Up", command=lambda: self.move_up(), image=self.img_key_w)
+        # self.up.bind('<Key-2>', lambda event: self.move_up())
         self.up.grid(column=1, pady=3, row=1)
-        self.left = ttk.Button(self.main, text="Left", command=lambda: self.move_left())
-        # self.up.bind('<ButtonRelease-3>', lambda event: self.move_left())
+        self.left = ttk.Button(self.main, text="Left", command=lambda: self.move_left(), image=self.img_key_a)
+        # self.up.bind('<Key-2>', lambda event: self.move_left())
         self.left.grid(column=0, row=2, sticky='e')
-        self.fire = ttk.Button(self.main, text="Fire", command=lambda: self.player_shoot())
+        self.fire = ttk.Button(self.main, text="Fire", command=lambda: self.player_shoot(), image=self.img_key_x)
         self.fire.grid(column=1, pady=3, row=2)
-        self.right = ttk.Button(self.main, text="Right", command=lambda: self.move_right())
-        # self.up.bind('<ButtonRelease-4>', lambda event: self.move_right())
+        self.right = ttk.Button(self.main, text="Right", command=lambda: self.move_right(), image=self.img_key_d)
+        # self.up.bind('<Key-2>', lambda event: self.move_right())
         self.right.grid(column=2, row=2, sticky='w')
-        self.down = ttk.Button(self.main, text="Down", command=lambda: self.move_down())
-        # self.up.bind('<ButtonRelease-5>', lambda event: self.move_down())
+        self.down = ttk.Button(self.main, text="Down", command=lambda: self.move_down(), image=self.img_key_s)
+        # self.up.bind('<Key-2>', lambda event: self.move_down())
         self.down.grid(column=1, pady="3", row=3)
-        self.turn_l = ttk.Button(self.main, text="Turn L", command=lambda: self.turn_left())
+        self.turn_l = ttk.Button(self.main, text="Turn L", command=lambda: self.turn_left(), image=self.img_key_q)
         self.turn_l.grid(column=0, row=1, sticky="e")
-        self.turn_r = ttk.Button(self.main, text="Turn R", command=lambda: self.turn_right())
+        self.turn_r = ttk.Button(self.main, text="Turn R", command=lambda: self.turn_right(), image=self.img_key_e)
         self.turn_r.grid(column=2, row=1, sticky="w")
         self.reset = ttk.Button(self.main, text="Reset", command=lambda: self.reset_game())
         self.reset.grid(column=0, row=4, sticky="e")
@@ -100,7 +112,6 @@ class TankTkinterApp:
 
     def run(self):
         self.main_window.mainloop()
-        app.game_running()
 
 # Reset game
     def reset_game(self):
@@ -139,7 +150,7 @@ class TankTkinterApp:
         global img_player_copy
         img_rt_90 = rotate_img(img_path_original, 90)
         img_rt_90.save((os.path.join(img_folder, 'tank_main_t.png')))
-        img_player_copy = ImageTk.PhotoImage(img_rt_90) # update image with rotated one
+        img_player_copy = ImageTk.PhotoImage(img_rt_90)  # update image with rotated one
         self.button_player.config(image=img_player_copy)
 
 # Rotate player unit
@@ -147,7 +158,7 @@ class TankTkinterApp:
         global img_player_copy
         img_rt_90 = rotate_img(img_path_original, -90)
         img_rt_90.save((os.path.join(img_folder, 'tank_main_t.png')))
-        img_player_copy = ImageTk.PhotoImage(img_rt_90) # update image with rotated one
+        img_player_copy = ImageTk.PhotoImage(img_rt_90)  # update image with rotated one
         self.button_player.config(image=img_player_copy)
 
     def player_shoot(self):
