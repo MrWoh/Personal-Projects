@@ -10,20 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 def index(request):
-    num_order = Order.objects.all().count()
-    num_categories = Categories.objects.all().count()
-    num_supplier = Supplier.objects.count()
-
-    num_visits = request.session.get('num_visits', 1)
-    request.session['num_visits'] = num_visits + 1
-
-    context = {
-        'num_order': num_order,
-        'num_categories': num_categories,
-        'num_supplier': num_supplier,
-        'num_visits': num_visits,
-    }
-    return render(request, 'index.html', context=context)
+    return render(request, 'index.html')
 
 
 def suppliers(request):
@@ -42,7 +29,19 @@ def supplier(request, supplier_id):
 
 
 def info(request):
-    return render(request, 'info.html')
+    num_order = Order.objects.all().count()
+    num_categories = Categories.objects.all().count()
+    num_supplier = Supplier.objects.all().count()
+    num_visits = request.session.get('num_visits', 1)
+    request.session['num_visits'] = num_visits + 1
+
+    context = {
+        'num_order': num_order,
+        'num_categories': num_categories,
+        'num_supplier': num_supplier,
+        'num_visits': num_visits,
+    }
+    return render(request, 'info.html', context=context)
 
 
 def orders(request):

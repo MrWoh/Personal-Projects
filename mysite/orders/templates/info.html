@@ -1,4 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>INFO!</h1>
+<h1>General Info</h1>
+
+<ul>
+    <br><br><br>
+    <li><strong>Order Count:</strong> {{ order_count }}</li>
+    <li><strong>Orders:</strong> {{ num_order }}</li>
+    <li><strong>Categories:</strong> {{ num_categories }}</li>
+    <li><strong>Suppliers:</strong> {{ num_supplier }}</li>
+
+    <br><br><br>
+    <p>Visits: {{ num_visits }}</p>
+</ul>
 {% endblock content %}
