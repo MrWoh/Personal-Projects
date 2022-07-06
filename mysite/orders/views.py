@@ -14,7 +14,7 @@ def index(request):
 
 
 def suppliers(request):
-    paginator = Paginator(Supplier.objects.all(), 3)
+    paginator = Paginator(Supplier.objects.all(), 10)
     page_number = request.GET.get('page')
     paged_suppliers = paginator.get_page(page_number)
     my_context = {
